@@ -17,14 +17,10 @@ namespace Fiap.Infra.IoC
             services.AddScoped<IUserLogged, UserLogged>();
 
             services.AddSingleton<OrcContext, OrcContext>();
-
-            services.AddTransient<ICriminalRepository, CriminalRepository>();
-            services.AddTransient<IVictimRepository, VictimRepository>();
-            services.AddTransient<ICrimeRepository, CrimeRepository>();
-
-            services.AddTransient<ICriminalDomainService, CriminalDomainService>();
-            services.AddTransient<IVictimDomainService, VictimDomainService>();
-            services.AddTransient<ICrimeDomainService, CrimeDomainService>();
+            
+            services.AddTransient<ICandidateRepository, CandidateRepository>();            
+            
+            services.AddTransient<ICandidateDomainService, CandidateDomainService>();            
 
             services.AddTransient<IAuthenticatorService, AuthenticatorService>();
         }

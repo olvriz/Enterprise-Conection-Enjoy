@@ -1,28 +1,83 @@
-﻿using Fiap.Domain.DomainServiceInterface;
+﻿using Microsoft.AspNetCore.Mvc;
+using Fiap.Domain.DomainServiceInterface;
 using Fiap.Domain.Enums;
 using Fiap.Domain.Extensions;
 using Fiap.Domain.Models.Request;
-using Microsoft.AspNetCore.Mvc;
+using Fiap.Domain.Strings;
 
 namespace Fiap.Api.Controllers
 {
-    [Route("api/crime")]
-    public class CrimeController : ControllerBase
+    [Route("api/candidate")]
+    public class CandidateController : ControllerBase
     {
-        private readonly ICrimeDomainService _crimeDomainService;
+        private readonly ICandidateDomainService _victimDomainService;
 
-        public CrimeController(ICrimeDomainService crimeDomainService)
+        public CandidateController(ICandidateDomainService victimDomainService)
         {
-            _crimeDomainService = crimeDomainService;
+            _victimDomainService = victimDomainService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CrimeCreateRequest createRequest)
+        public async Task<IActionResult> CreateCandidate([FromBody] CandidateCreateRequest VictimCreate)
         {
             try
             {
 
-                var hasSuccess = await _crimeDomainService.Create(createRequest);
+                var hasSuccess = await _victimDomainService.CreateCandidate(VictimCreate);  
+
+                if (!hasSuccess)
+                    throw new Exception();
+
+                return StatusCode(HttpCodes.Created);
+            }
+            catch (ApplicationException ae)
+            {
+                return BadRequest(ae.Message.ToResponseMessage());
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                return StatusCode(HttpCodes.InternalError, e.Message.ToResponseMessage());
+#else
+                return StatusCode(HttpCodes.InternalError, ErrorMessages.DefaultErrorMessage.ToResponseMessage());                
+#endif  
+            }
+        }
+
+        [HttpPost("{candidateId}/skills")]
+        public async Task<IActionResult> InsertCandidateSkills([FromRoute] int candidateId, [FromQuery] List<string> skills)
+        {
+            try
+            {
+
+                var hasSuccess = await _victimDomainService.InsertCandidateSkills(candidateId, skills);
+
+                if (!hasSuccess)
+                    throw new Exception();
+
+                return StatusCode(HttpCodes.Created);
+            }
+            catch (ApplicationException ae)
+            {
+                return BadRequest(ae.Message.ToResponseMessage());
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                return StatusCode(HttpCodes.InternalError, e.Message.ToResponseMessage());
+#else
+                return StatusCode(HttpCodes.InternalError, ErrorMessages.DefaultErrorMessage.ToResponseMessage());                
+#endif  
+            }
+        }
+
+        [HttpPost("{candidateId}/certifications")]
+        public async Task<IActionResult> InsertCandidateCertifications([FromRoute] int candidateId, [FromQuery] List<string> certifications)
+        {
+            try
+            {
+
+                var hasSuccess = await _victimDomainService.InsertCandidateCertifications(candidateId, certifications);
 
                 if (!hasSuccess)
                     throw new Exception();
@@ -44,12 +99,12 @@ namespace Fiap.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetCandidates([FromQuery] string? skill, string? certification)
         {
             try
             {
 
-                return Ok(await _crimeDomainService.GetAll());
+                return Ok(await _victimDomainService.GetCandidates());
             }
             catch (ApplicationException ae)
             {
@@ -63,84 +118,7 @@ namespace Fiap.Api.Controllers
                 return StatusCode(HttpCodes.InternalError, ErrorMessages.DefaultErrorMessage.ToResponseMessage());                
 #endif  
             }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute] int id)
-        {
-            try
-            {
-
-                return Ok(await _crimeDomainService.GetById(id));
-            }
-            catch (ApplicationException ae)
-            {
-                return BadRequest(ae.Message.ToResponseMessage());
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                return StatusCode(HttpCodes.InternalError, e.Message.ToResponseMessage());
-#else
-                return StatusCode(HttpCodes.InternalError, ErrorMessages.DefaultErrorMessage.ToResponseMessage());                
-#endif  
-            }
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] CrimeUpdateRequest update)
-        {
-            try
-            {
-
-                var hasSuccess = await _crimeDomainService.Update(update);
-
-                if (!hasSuccess)
-                    throw new Exception();
-
-                return StatusCode(HttpCodes.Created);
-            }
-            catch (ApplicationException ae)
-            {
-                return BadRequest(ae.Message.ToResponseMessage());
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                return StatusCode(HttpCodes.InternalError, e.Message.ToResponseMessage());
-#else
-                return StatusCode(HttpCodes.InternalError, ErrorMessages.DefaultErrorMessage.ToResponseMessage());                
-#endif  
-            }
-        }
-
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
-        {
-            try
-            {
-                var hasSuccess = await _crimeDomainService.Delete(id);
-
-                if (!hasSuccess)
-                    throw new Exception();
-
-                return StatusCode(HttpCodes.Created);
-
-            }
-            catch (ApplicationException ae)
-            {
-                return BadRequest(ae.Message.ToResponseMessage());
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                return StatusCode(HttpCodes.InternalError, e.Message.ToResponseMessage());
-#else
-                return StatusCode(HttpCodes.InternalError, ErrorMessages.DefaultErrorMessage.ToResponseMessage());                
-#endif  
-            }
-        }
+        }        
 
     }
 }
