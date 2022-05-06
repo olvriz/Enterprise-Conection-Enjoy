@@ -4,17 +4,18 @@ using Fiap.Domain.Enums;
 using Fiap.Domain.Extensions;
 using Fiap.Domain.Models.Request;
 using Fiap.Domain.Strings;
+using Fiap.Domain.Entities;
 
 namespace Fiap.Api.Controllers
 {
     [Route("api/candidate")]
     public class CandidateController : ControllerBase
     {
-        private readonly ICandidateDomainService _victimDomainService;
+        private readonly ICandidateDomainService _CandidateDomainService;
 
         public CandidateController(ICandidateDomainService victimDomainService)
         {
-            _victimDomainService = victimDomainService;
+            _CandidateDomainService = victimDomainService;
         }
 
         [HttpPost]
@@ -23,7 +24,7 @@ namespace Fiap.Api.Controllers
             try
             {
 
-                var hasSuccess = await _victimDomainService.CreateCandidate(VictimCreate);  
+                var hasSuccess = await _CandidateDomainService.CreateCandidate(VictimCreate);  
 
                 if (!hasSuccess)
                     throw new Exception();
@@ -50,7 +51,7 @@ namespace Fiap.Api.Controllers
             try
             {
 
-                var hasSuccess = await _victimDomainService.InsertCandidateSkills(candidateId, skills);
+                var hasSuccess = await _CandidateDomainService.InsertCandidateSkills(candidateId, skills);
 
                 if (!hasSuccess)
                     throw new Exception();
@@ -77,7 +78,7 @@ namespace Fiap.Api.Controllers
             try
             {
 
-                var hasSuccess = await _victimDomainService.InsertCandidateCertifications(candidateId, certifications);
+                var hasSuccess = await _CandidateDomainService.InsertCandidateCertifications(candidateId, certifications);
 
                 if (!hasSuccess)
                     throw new Exception();
@@ -104,7 +105,18 @@ namespace Fiap.Api.Controllers
             try
             {
 
-                return Ok(await _victimDomainService.GetCandidates());
+                var candidates = new List<Candidate>();
+
+                if (skill == null && certification == null)
+                {
+                    candidates = await _CandidateDomainService.GetCandidates();
+                } 
+                else
+                {
+                    candidates = await _CandidateDomainService.GetCandidatesWithFilter(skill, certification);
+                }
+
+                return Ok(candidates);
             }
             catch (ApplicationException ae)
             {

@@ -55,6 +55,16 @@ namespace Fiap.Infra.Data.Repository
             return skills.ToList();
         }
 
+        public async Task<List<Candidate>> GetCandidatesWithFilter(string? skill, string? certification)
+        {
+            var candidates = await _orcContext.Connection.QueryAsync<Candidate>(Queries.Queries.GetCandidatesWithFilter, new
+            {
+                skill, certification
+            });
+
+            return candidates.ToList();
+        }
+
         public async Task<bool> InsertCertification(int candidateId, string certification)
         {
             var affectedRows = await _orcContext.Connection.ExecuteAsync(Queries.Queries.InsertCandidateCertification, new

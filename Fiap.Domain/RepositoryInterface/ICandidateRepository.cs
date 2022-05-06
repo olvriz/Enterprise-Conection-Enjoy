@@ -14,6 +14,7 @@ namespace Fiap.Domain.RepositoryInterface
         Task<bool> InsertSkill(int candidateId, string skill);
         Task<bool> InsertCertification(int candidateId, string certification);
         Task<List<Candidate>> GetCandidates();
+        Task<List<Candidate>> GetCandidatesWithFilter(string? skill, string? certification);
         Task<List<string>> GetCandidateSkills(int candidateId);
         Task<List<string>> GetCandidateCertifications(int candidateId);
     }

@@ -53,6 +53,23 @@ namespace Fiap.Infra.Data.Queries
               tbl_candidato c
         ";
 
+        public const string GetCandidatesWithFilter = @"
+            SELECT
+              DISTINCT c.id_candidato Id,
+              c.tx_cpf Document,
+              c.tx_email Email,
+              c.dt_nascimento BirthDate,
+              c.tx_nome Name,
+              c.tx_telefone PhoneNumber
+            FROM
+              tbl_candidato c
+              LEFT JOIN tbl_skills s ON s.id_candidato = c.id_candidato
+              LEFT JOIN tbl_certificacao ct ON ct.id_candidato = c.id_candidato
+            WHERE
+              s.tx_descricao = :skill
+              OR ct.tx_nome = :certification
+        ";
+
         public const string GetCandidateSkills = @"
             select tx_descricao from tbl_skills where id_candidato = :candidateId
         ";

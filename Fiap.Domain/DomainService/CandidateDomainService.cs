@@ -35,7 +35,20 @@ namespace Fiap.Domain.DomainService
         public async Task<List<Candidate>> GetCandidates()
         {
             var candidates = await _candidateRepository.GetCandidates();
+            
+            return await GetCandidatesInfos(candidates);
+        }
+        
 
+        public async Task<List<Candidate>> GetCandidatesWithFilter(string? skill, string? certification)
+        {
+            var candidates = await _candidateRepository.GetCandidatesWithFilter(skill, certification);
+
+            return await GetCandidatesInfos(candidates);
+        }
+
+        private async Task<List<Candidate>> GetCandidatesInfos(List<Candidate> candidates)
+        {
             foreach (var candidate in candidates)
             {
                 candidate.Certifications = await _candidateRepository.GetCandidateCertifications(candidate.Id);
